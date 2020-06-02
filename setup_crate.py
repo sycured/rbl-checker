@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Create table in Crate.io database engine."""
-from os import _exit
+from sys import exit
 
 from requests import post
 
@@ -14,4 +14,4 @@ if r.status_code == 200:
     print('SUCCESS')
 else:
     print('Error :\n' + r.text)
-    _exit(1)
+    exit(1)
