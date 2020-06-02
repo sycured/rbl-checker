@@ -4,7 +4,7 @@ from requests import post
 from dns.resolver import query
 
 
-def do(crate_server, crate_port, rip):
+def do_job(crate_server, crate_port, rip):
     """Run verification and if positive insert data to the database."""
     ip = '.'.join(reversed(rip.split('.')))
     for rblname in rbls.rbls:
@@ -23,5 +23,5 @@ def do(crate_server, crate_port, rip):
                 )
                 payload = {'stmt': value}
                 post(url, json=payload)
-        except:
-            pass
+        except Exception as e:
+            print(f'error {e}')

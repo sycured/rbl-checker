@@ -2,6 +2,9 @@
 
 Help you to check if any IP in your IP range is blacklisted
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sycured_rbl-checker&metric=alert_status)](https://sonarcloud.io/dashboard?id=sycured_rbl-checker)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=sycured_rbl-checker&metric=code_smells)](https://sonarcloud.io/dashboard?id=sycured_rbl-checker)
+
 *Author : sycured*
 
 *LICENSE : GNU GENERAL PUBLIC LICENSE Version 3*

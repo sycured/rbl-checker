@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 """Entire checker module."""
-from rbls.run import do
+from rbls.run import do_job
 
 
 def check(ip):
@@ -12,7 +12,7 @@ def check(ip):
     crate_server = 'localhost'
     crate_port = '4200'
     rip = '.'.join(reversed(ip.split('.')))
-    do(crate_server, crate_port, rip)
+    do_job(crate_server, crate_port, rip)
 
 def dispatch(entry):
     """Send each IP in a range to the check otherwise send only one IP."""
