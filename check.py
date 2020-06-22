@@ -14,6 +14,7 @@ def check(ip):
     rip = '.'.join(reversed(ip.split('.')))
     do_job(crate_server, crate_port, rip)
 
+
 def dispatch(entry):
     """Send each IP in a range to the check otherwise send only one IP."""
     from ipaddress import ip_network
