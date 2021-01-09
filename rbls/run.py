@@ -1,7 +1,7 @@
 from rbls import rbls
 from datetime import datetime
 from requests import post
-from dns.resolver import query
+from dns.resolver import resolve
 
 
 def do_job(crate_server, crate_port, rip):
@@ -10,7 +10,7 @@ def do_job(crate_server, crate_port, rip):
     for rblname in rbls.rbls:
         try:
             dns_query = rip + '.' + rblname
-            dns_result = query(dns_query, 'A')
+            dns_result = resolve(dns_query, 'A')
             date = datetime.now().isoformat()
             if dns_result[0]:
                 url = 'http://' + crate_server + ':' + crate_port + '/_sql'
