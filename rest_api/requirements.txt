@@ -1,0 +1,4 @@
+aiokafka
+fastapi
+uvicorn
+uvloop
