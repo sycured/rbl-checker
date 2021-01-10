@@ -2,6 +2,8 @@
 # coding: utf-8
 
 """RBL-Checker: rest api to add new range to check."""
+from ipaddress import ip_network
+
 from aiokafka import AIOKafkaProducer
 
 from config import kafka_topic
@@ -37,8 +39,24 @@ async def shutdown_event():
     await aio_producer.stop()
 
 
+async def send_msg(msg):
+    """Send msg to Kafka."""
+    await aio_producer.send(topic=kafka_topic, value=msg)
+
+
+async def split_range(ip_range):
+    """Split network range to individual ip."""
+    for ip in ip_network(ip_range).hosts():
+        msg = {'ip': str(ip)}
+        await send_msg(msg)
+
+
 @app.post('/add', status_code=200)
 async def add(body: AddReqJson):
     """Add the range to the queue."""
-    await aio_producer.send(topic=kafka_topic, value=body.json())
+    if '/32' in body.ip_range:
+        msg = {'ip': body.ip_range.split('/')[0]}
+        await send_msg(msg)
+    else:
+        await split_range(body.ip_range)
     return Response()
