@@ -1,50 +1,59 @@
 # rbl-checker
 
-Help you to check if any IP in your IP range is blacklisted
+Help you to check if any IP is blacklisted
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sycured_rbl-checker&metric=alert_status)](https://sonarcloud.io/dashboard?id=sycured_rbl-checker)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=sycured_rbl-checker&metric=code_smells)](https://sonarcloud.io/dashboard?id=sycured_rbl-checker)
 
 *Author : sycured*
 
-*LICENSE : GNU GENERAL PUBLIC LICENSE Version 3*
+*LICENSE : GNU AFFERO GENERAL PUBLIC LICENSE Version 3*
 
-# Install
+## Requirements
 
-Git clone the repository and install all requirements.
-
-If you use virtual environment, you can create it directly here.
-
-This is the list of name included in the .gitignore for it :
-
-- .env
-- env
-- ENV
-- venv
-
-You also need [CrateDB](https://crate.io/download).
+- Python3
+- Kafka
+- PostgreSQL or compatible (ex. Yugabyte)
 
 
-## CrateDB : Setup table
+## DB: Setup table
 
-    python3 setup_crate.py
+```sql
+create table rbl (id serial primary key, date timestamptz, ip_srv text, rblname text);
+```
 
-## List of IP range
+When you have entries inside the table, it looks like:
 
-You need to create the file :
+ id |             date              |   ip_srv   |       rblname
+----|-------------------------------|------------|---------------------
+  1 | 2021-01-10 19:35:29.533729+00 | 95.216.0.1 | bl.emailbasura.org
+  4 | 2021-01-10 19:35:46.771444+00 | 95.216.0.2 | bl.spamcannibal.org
+  2 | 2021-01-10 19:35:35.716627+00 | 95.216.0.1 | bl.spamcannibal.org
+  3 | 2021-01-10 19:35:45.45523+00  | 95.216.0.2 | bl.emailbasura.org
+(4 rows)
 
-    ip_range.list
+## rest_api
 
-It's a simple text file like ip_range.example but it's included in .gitignore.
+It's where you add new range to scan. By default uvicorn listen on http://127.0.0.1:8000
 
-Your ip_range.list must be in the same directory of ip_range.example.
+The config uses environment variables and you need to look the [rest_api/config.py](rest_api/config.py)
 
-# Run
+```bash
+cd rest_api && uvicorn main:app
+```
 
-    python3 run.py
+### How to insert a range to test
 
-# Update
+```bash
+curl -X POST "http://127.0.0.1:8000/add" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"ip_range\":\"95.216.0.0/16\"}"
+````
 
-You can easily update using
+## consumer
 
-    git pull
+Check the IP and add data to the database in case of it's inside an RBL.
+
+The config uses environment variables and you need to look at [consumer/config.py](consumer/config.py)
+
+```bash
+cd consumer && DB_USER=rbl DB_PASS=toto python3 main.py
+```
