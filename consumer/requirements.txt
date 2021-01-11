@@ -1,0 +1,4 @@
+aiokafka
+aiopg
+uvicorn
+uvloop
