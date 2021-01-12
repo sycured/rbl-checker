@@ -1,4 +1,2 @@
 aiokafka
-aiopg
-uvicorn
 uvloop

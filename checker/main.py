@@ -1,51 +1,50 @@
 """Consumes message from Kafka, check in RBL and insert positive IP."""
-from asyncio import get_event_loop, set_event_loop_policy
-from asyncio.events import AbstractEventLoop
+from asyncio import run, set_event_loop_policy
 from datetime import datetime
 
-from aiokafka import AIOKafkaConsumer
+from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
-from aiopg import Pool
-
-from db_utils import create_db_pool, insert_result
+from config import kafka_topic_result
 
 from dns.resolver import resolve
 
-from kafka_utils import create_aio_consumer
+from kafka_utils import create_aio_consumer, create_aio_producer
 
 from rbls import rbls
 
 from uvloop import EventLoopPolicy
 
-set_event_loop_policy(EventLoopPolicy())
-loop: AbstractEventLoop = get_event_loop()
 
-
-def check(rip, rblname):
+async def check(date, ip, rip, rblname):
     """Do and return the result of the query."""
     try:
         dns_query = f'{rip}.{rblname}'
-        return resolve(dns_query, 'A')
+        rst = resolve(dns_query, 'A')
+        if rst is not None:
+            return {'date': date, 'ip': ip, 'rblname': rblname}
     except Exception as e:
-        print(f'{e=}')
+        print(e)
         return None
 
 
 async def app():
     """Do the check of the IP across the list and insert positive IP."""
-    aio_consumer: AIOKafkaConsumer = await create_aio_consumer(loop)
-    db_pool: Pool = await create_db_pool(loop)
-    await aio_consumer.start()
-    async for msg in aio_consumer:
+    consumer_rbl: AIOKafkaConsumer = await create_aio_consumer()
+    producer_result: AIOKafkaProducer = await create_aio_producer()
+    await consumer_rbl.start()
+    await producer_result.start()
+    async for msg in consumer_rbl:
         if msg is None:
             continue
         ip = msg.value['ip']
         rip = '.'.join(reversed(ip.split('.')))
         for rblname in rbls:
             date = datetime.now().isoformat()
-            result = check(rip, rblname)
+            result = await check(date, ip, rip, rblname)
             if result is not None:
-                await insert_result(db_pool, date, ip, rblname)
+                await producer_result.send(topic=kafka_topic_result,
+                                           value=result)
 
 
-loop.run_until_complete(app())
+set_event_loop_policy(EventLoopPolicy())
+run(app())
