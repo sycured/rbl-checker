@@ -6,7 +6,7 @@ from ipaddress import ip_network
 
 from aiokafka import AIOKafkaProducer
 
-from config import kafka_topic
+from config import kafka_topic_rbl
 
 from fastapi import FastAPI
 from fastapi.responses import Response
@@ -41,7 +41,7 @@ async def shutdown_event():
 
 async def send_msg(msg):
     """Send msg to Kafka."""
-    await aio_producer.send(topic=kafka_topic, value=msg)
+    await aio_producer.send(topic=kafka_topic_rbl, value=msg)
 
 
 async def split_range(ip_range):

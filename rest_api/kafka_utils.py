@@ -1,5 +1,5 @@
 """Create and return AIOKafkaProducer."""
-from asyncio import get_event_loop, set_event_loop_policy
+from asyncio import get_running_loop, set_event_loop_policy
 from asyncio.events import AbstractEventLoop
 from json import dumps
 from ssl import SSLContext
@@ -15,7 +15,7 @@ from config import kafka_compression, kafka_host, kafka_port, \
 from uvloop import EventLoopPolicy
 
 set_event_loop_policy(EventLoopPolicy())
-loop: AbstractEventLoop = get_event_loop()
+loop: AbstractEventLoop = get_running_loop()
 
 
 def create_kafka_ssl_context() -> SSLContext:
