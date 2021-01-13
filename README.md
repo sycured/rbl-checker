@@ -18,7 +18,7 @@ Help you to check if any IP is blacklisted
 ### Setup table
 
 ```sql
-create table rbl (id serial primary key, date timestamptz, ip_srv text, rblname text);
+create table rbl (id serial primary key, date timestamp, ip_srv text, rblname text);
 ```
 
 ### Look of the select everything
@@ -71,11 +71,21 @@ pip3 install python-snappy
 curl -X POST "http://127.0.0.1:8000/add" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{\"ip_range\":\"95.216.0.0/16\"}"
 ````
 
-## consumer
+## checker
 
-Check the IP and add data to the database in case of it's inside an RBL.
+Check the IP and add data to dedicated queue in case of it's inside an RBL.
 
-The config uses environment variables and you need to look at [consumer/config.py](consumer/config.py)
+The config uses environment variables and you need to look at [checker/config.py](consumer/config.py)
+
+```bash
+cd consumer && python3 main.py
+```
+
+## inserter
+
+Take data frm queue and insert it to database.
+
+The config uses environment variables and you need to look at [inserter/config.py](consumer/config.py)
 
 ```bash
 cd consumer && DB_USER=rbl DB_PASS=toto python3 main.py
