@@ -13,8 +13,8 @@ async def insert_result(db_pool, date, ip, rblname):
             await cur.execute(insert)
 
 
-async def create_db_pool(loop) -> Pool:
+async def create_db_pool() -> Pool:
     """Create and return pool."""
     dsn = f'postgres://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}'
-    pool = await create_pool(loop=loop, dsn=dsn)
+    pool = await create_pool(dsn=dsn)
     return pool
