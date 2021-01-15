@@ -12,10 +12,13 @@ from kafka_utils import create_aio_consumer, create_aio_producer
 
 from rbls import rbls
 
+from typing import Optional
+
 from uvloop import EventLoopPolicy
 
 
-async def check(date, ip, rip, rblname):
+async def check(date: str, ip: str, rip: str, rblname: str
+                ) -> Optional[dict[str, str, str, str, str, str]]:
     """Do and return the result of the query."""
     try:
         dns_query = f'{rip}.{rblname}'
@@ -36,11 +39,12 @@ async def app():
     async for msg in consumer_rbl:
         if msg is None:
             continue
-        ip = msg.value['ip']
-        rip = '.'.join(reversed(ip.split('.')))
+        ip: str = msg.value['ip']
+        rip: str = '.'.join(reversed(ip.split('.')))
         for rblname in rbls:
-            date = datetime.now().isoformat()
-            result = await check(date, ip, rip, rblname)
+            date: str = datetime.now().isoformat()
+            result: Optional[dict[str, str, str, str, str, str]] = await check(
+                date, ip, rip, rblname)
             if result is not None:
                 await producer_result.send(topic=kafka_topic_result,
                                            value=result)
