@@ -39,15 +39,15 @@ async def shutdown_event():
     await aio_producer.stop()
 
 
-async def send_msg(msg):
+async def send_msg(msg: dict[str, str]):
     """Send msg to Kafka."""
     await aio_producer.send(topic=kafka_topic_rbl, value=msg)
 
 
-async def split_range(ip_range):
+async def split_range(ip_range: str):
     """Split network range to individual ip."""
     for ip in ip_network(ip_range).hosts():
-        msg = {'ip': str(ip)}
+        msg: dict[str, str] = {'ip': str(ip)}
         await send_msg(msg)
 
 
@@ -55,7 +55,7 @@ async def split_range(ip_range):
 async def add(body: AddReqJson):
     """Add the range to the queue."""
     if '/32' in body.ip_range:
-        msg = {'ip': body.ip_range.split('/')[0]}
+        msg: dict[str, str] = {'ip': body.ip_range.split('/')[0]}
         await send_msg(msg)
     else:
         await split_range(body.ip_range)
