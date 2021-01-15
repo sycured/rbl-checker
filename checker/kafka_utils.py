@@ -22,7 +22,7 @@ def create_kafka_ssl_context() -> SSLContext:
 
 
 async def create_aio_consumer() -> AIOKafkaConsumer:
-    """Create and return AIOKafkaProducer."""
+    """Create and return AIOKafkaConsumer."""
     return AIOKafkaConsumer(
         kafka_topic_rbl, group_id='rbl_consumer',
         bootstrap_servers=f'{kafka_host}:{kafka_port}',
