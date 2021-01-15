@@ -31,17 +31,18 @@ def create_kafka_ssl_context() -> SSLContext:
 def create_aio_producer() -> AIOKafkaProducer:
     """Create and return AIOKafkaProducer."""
     return AIOKafkaProducer(
-        loop=loop, bootstrap_servers=f'{kafka_host}:{kafka_port}',
+        bootstrap_servers=f'{kafka_host}:{kafka_port}',
         value_serializer=lambda v: dumps(v).encode('utf-8'),
         compression_type=kafka_compression,
         ssl_context=create_kafka_ssl_context(),
         security_protocol='SSL', sasl_mechanism=kafka_sasl_mechanism,
         sasl_plain_username=kafka_sasl_plain_username,
-        sasl_plain_password=kafka_sasl_plain_password) if kafka_ssl else \
-        AIOKafkaProducer(
-            loop=loop, bootstrap_servers=f'{kafka_host}:{kafka_port}',
+        sasl_plain_password=kafka_sasl_plain_password
+    ) if kafka_ssl else AIOKafkaProducer(
+        bootstrap_servers=f'{kafka_host}:{kafka_port}',
         value_serializer=lambda v: dumps(v).encode('utf-8'),
-        compression_type=kafka_compression, security_protocol='PLAINTEXT',
-        sasl_mechanism=kafka_sasl_mechanism,
+        compression_type=kafka_compression,
+        security_protocol='PLAINTEXT', sasl_mechanism=kafka_sasl_mechanism,
         sasl_plain_username=kafka_sasl_plain_username,
-        sasl_plain_password=kafka_sasl_plain_password)
+        sasl_plain_password=kafka_sasl_plain_password
+    )
