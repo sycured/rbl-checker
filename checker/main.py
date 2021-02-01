@@ -46,8 +46,8 @@ async def app():
             result: Optional[dict[str, str, str, str, str, str]] = await check(
                 date, ip, rip, rblname)
             if result is not None:
-                await producer_result.send(topic=kafka_topic_result,
-                                           value=result)
+                await producer_result.send_and_wait(topic=kafka_topic_result,
+                                                    value=result)
 
 
 set_event_loop_policy(EventLoopPolicy())

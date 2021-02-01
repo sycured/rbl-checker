@@ -45,7 +45,7 @@ async def create_aio_producer() -> AIOKafkaProducer:
     return AIOKafkaProducer(
         bootstrap_servers=f'{kafka_host}:{kafka_port}',
         value_serializer=lambda v: dumps(v).encode('utf-8'),
-        compression_type=kafka_compression,
+        enable_idempotence=True, compression_type=kafka_compression,
         ssl_context=create_kafka_ssl_context(),
         security_protocol='SSL', sasl_mechanism=kafka_sasl_mechanism,
         sasl_plain_username=kafka_sasl_plain_username,
@@ -53,7 +53,7 @@ async def create_aio_producer() -> AIOKafkaProducer:
     ) if kafka_ssl else AIOKafkaProducer(
         bootstrap_servers=f'{kafka_host}:{kafka_port}',
         value_serializer=lambda v: dumps(v).encode('utf-8'),
-        compression_type=kafka_compression, security_protocol='PLAINTEXT',
-        sasl_mechanism=kafka_sasl_mechanism,
+        enable_idempotence=True, compression_type=kafka_compression,
+        security_protocol='PLAINTEXT', sasl_mechanism=kafka_sasl_mechanism,
         sasl_plain_username=kafka_sasl_plain_username,
         sasl_plain_password=kafka_sasl_plain_password)
