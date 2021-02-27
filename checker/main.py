@@ -1,6 +1,7 @@
 """Consumes message from Kafka, check in RBL and insert positive IP."""
 from asyncio import run, set_event_loop_policy
 from datetime import datetime
+from typing import Optional
 
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
@@ -11,8 +12,6 @@ from dns.resolver import resolve
 from kafka_utils import create_aio_consumer, create_aio_producer
 
 from rbls import rbls
-
-from typing import Optional
 
 from uvloop import EventLoopPolicy
 
