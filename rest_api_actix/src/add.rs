@@ -15,6 +15,10 @@ pub struct AddResp {
     result: String,
 }
 
+fn create_json(data: String) {
+    info!("{}", Json(AddResp { result: data }).result)
+}
+
 #[api_v2_operation(
     description = "Add the range to the queue.",
     consumes = "application/json",
@@ -22,19 +26,13 @@ pub struct AddResp {
 )]
 pub async fn add(data: Json<AddPost>) -> Result<Json<AddResp>> {
     let ipr = IPAddress::parse(data.ip_range.to_string()).unwrap();
-    ipr.each_host(|i| {
-        // ips.push(i.to_string())
-        info!(
-            "{}",
-            Json(AddResp {
-                result: i.to_string()
-            })
-            .result
-        )
-    });
-    // IPAddress::each_host(&ipr.unwrap(), |i| ips.to_owned().push(i.to_string()));
+    if !ipr.to_string().contains("/32") {
+        ipr.each_host(|ip| create_json(ip.to_string()))
+    } else {
+        create_json(ipr.to_string())
+    }
     Ok(Json(AddResp {
-        result: format!("{}", ipr.to_string()),
+        result: format!("Success, new IP range added: {}", ipr.to_string()),
     }))
 }
 
