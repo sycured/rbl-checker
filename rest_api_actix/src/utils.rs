@@ -1,4 +1,5 @@
 use super::configuration::kafka_hosts;
+
 use kafka::producer::{
     Compression::SNAPPY, DefaultHasher, DefaultPartitioner, Producer, RequiredAcks::One,
 };

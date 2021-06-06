@@ -1,12 +1,18 @@
-use actix_web::middleware::{Compress, Logger};
-use actix_web::{web::Data, App, HttpServer};
+use actix_web::{
+    middleware::{Compress, Logger},
+    web::Data,
+    App, HttpServer,
+};
 use env_logger::{Builder, Env};
 use paperclip::actix::OpenApiExt;
 use std::{io::Result, sync::Mutex};
+
 mod add;
 use add::init_routes;
+
 mod configuration;
 use configuration::{app_ip, app_port};
+
 mod utils;
 use utils::create_kafka_producer;
 
