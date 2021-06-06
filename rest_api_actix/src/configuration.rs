@@ -21,14 +21,11 @@ pub async fn app_port() -> String {
     get_from_env_or_default("APP_PORT", "8080".to_string()).await
 }
 
-pub async fn kafka_compression() -> String {
-    get_from_env_or_default("KAFKA_COMPRESSION", "lz4".to_string()).await
-}
+// NEEDED FOR RDKAFKA
+// pub async fn kafka_compression() -> String {
+//     get_from_env_or_default("KAFKA_COMPRESSION", "lz4".to_string()).await
+// }
 
 pub async fn kafka_hosts() -> String {
-    get_from_env_or_default("KAFKA_HOSTS", "127.0.0.1:9093".to_string()).await
-}
-
-pub async fn kafka_topic() -> String {
-    get_from_env_or_default("KAFKA_TOPIC", "rbl".to_string()).await
+    get_from_env_or_default("KAFKA_HOSTS", "127.0.0.1:9092".to_string()).await
 }
