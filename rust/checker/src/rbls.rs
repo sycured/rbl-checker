@@ -1,0 +1,33 @@
+pub async fn rbls() -> Vec<String> {
+    let rbls: Vec<String> = vec![
+        "access.redhawk.org".to_string(),
+        "accredit.habeas.com".to_string(),
+        "admin.bl.kunderserver.de".to_string(),
+        "all.rbl.jp".to_string(),
+        "all.s5h.net".to_string(),
+        "all.spam-rbl.fr".to_string(),
+        "aspews.ext.sorbs.net".to_string(),
+        "auth.spamrats.com".to_string(),
+        "b.barracudacentral.org".to_string(),
+        "backscatter.spameatingmonkey.net".to_string(),
+        "bad.psky.me".to_string(),
+        "bl.blocklist.de".to_string(),
+        "bl.drmx.org".to_string(),
+        "bl.emailbasura.org".to_string(),
+        "bl.fmb.la".to_string(),
+        "bl.konstant.no".to_string(),
+        "bl.mailspike.net".to_string(),
+        "bl.mipspace.com".to_string(),
+        "bl.nszones.com".to_string(),
+        "bl.scientificspam.net".to_string(),
+        "bl.score.senderscore.com".to_string(),
+        "bl.spamcannibal.org".to_string(),
+        "bl.spamcop.net".to_string(),
+        "bl.spameatingmonkey.net".to_string(),
+        "bl.spamstinks.com".to_string(),
+        "bl.suomispam.net".to_string(),
+        "bl.tiopan.com".to_string(),
+        "hostkarma.junkemailfilter.com".to_string(),
+    ];
+    rbls
+}
