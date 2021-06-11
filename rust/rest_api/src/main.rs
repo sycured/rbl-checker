@@ -20,14 +20,14 @@ use utils::create_kafka_producer;
 async fn main() -> Result<()> {
     Builder::from_env(Env::default().default_filter_or("info")).init();
     let producer = create_kafka_producer().await;
-    let producer = Data::new(Mutex::new(producer));
+    let kafka_producer = Data::new(Mutex::new(producer));
     HttpServer::new(move || {
         App::new()
             .wrap_api()
             .wrap(Compress::default())
             .wrap(Logger::default())
             .configure(init_routes)
-            .app_data(producer.clone())
+            .app_data(kafka_producer.clone())
             .with_json_spec_at("/openapi.json")
             .build()
     })

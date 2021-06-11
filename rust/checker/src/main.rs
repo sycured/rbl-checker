@@ -3,16 +3,13 @@ mod rbls;
 mod structs;
 mod utils;
 
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use env_logger::{Builder, Env};
+use futures::{lock::Mutex, stream, StreamExt};
 use log::warn;
-use rayon::prelude::*;
 use rbls::rbls;
 use rdkafka::{consumer::Consumer, Message};
-use std::{
-    borrow::BorrowMut,
-    sync::{Arc, Mutex},
-};
+use std::{borrow::BorrowMut, sync::Arc};
 use structs::IpFromKafka;
 use utils::{create_kafka_consumer, create_kafka_producer, lookup};
 
@@ -51,15 +48,16 @@ async fn main() -> () {
                 };
                 let mesg: IpFromKafka = serde_json::from_str(payload).unwrap();
                 let rev_ip = reverse_ip(mesg.ip).await;
-                list_rbls.par_iter().for_each(|rbl| {
-                    let date: DateTime<Utc> = Utc::now();
+                let mut stream = stream::iter(&list_rbls);
+                while let Some(rbl) = stream.next().await {
                     lookup(
-                        date.to_string(),
+                        Utc::now().to_string(),
                         rev_ip.to_string(),
                         rbl.to_string(),
-                        producer.lock().unwrap().borrow_mut(),
-                    );
-                });
+                        producer.lock().await.borrow_mut(),
+                    )
+                    .await
+                }
             }
         };
     }

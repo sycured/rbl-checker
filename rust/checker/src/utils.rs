@@ -1,15 +1,19 @@
-use super::configuration::kafka_hosts;
-use super::structs::Result;
+use super::{
+    configuration::{kafka_compression, kafka_hosts},
+    reverse_ip,
+    structs::Result,
+};
 
 use dns_lookup::lookup_host;
-use kafka::producer::{
-    Compression::SNAPPY, DefaultHasher, DefaultPartitioner, Producer, Record, RequiredAcks::One,
-};
 use log::info;
-use rdkafka::consumer::DefaultConsumerContext;
-use rdkafka::util::DefaultRuntime;
-use rdkafka::{config::ClientConfig, consumer::stream_consumer::StreamConsumer};
-use std::{hash::BuildHasherDefault, time::Duration};
+use rdkafka::{
+    client::DefaultClientContext,
+    config::ClientConfig,
+    consumer::stream_consumer::StreamConsumer,
+    consumer::DefaultConsumerContext,
+    producer::{FutureProducer, FutureRecord},
+    util::{DefaultRuntime, Timeout},
+};
 
 pub async fn create_kafka_consumer() -> StreamConsumer<DefaultConsumerContext, DefaultRuntime> {
     let consumer: StreamConsumer = ClientConfig::new()
@@ -21,26 +25,32 @@ pub async fn create_kafka_consumer() -> StreamConsumer<DefaultConsumerContext, D
     consumer
 }
 
-pub async fn create_kafka_producer(
-) -> Producer<DefaultPartitioner<BuildHasherDefault<DefaultHasher>>> {
-    let producer = Producer::from_hosts(vec![kafka_hosts().await])
-        .with_compression(SNAPPY)
-        .with_ack_timeout(Duration::from_secs(1))
-        .with_required_acks(One)
+pub async fn create_kafka_producer() -> FutureProducer<DefaultClientContext, DefaultRuntime> {
+    let producer: &FutureProducer = &ClientConfig::new()
+        .set("bootstrap.servers", kafka_hosts().await)
+        .set("message.timeout.ms", "5000")
+        .set("compression.codec", kafka_compression().await)
+        .set("request.required.acks", "1")
+        .set("request.timeout.ms", "1000")
         .create()
         .unwrap();
-    producer
+    producer.clone()
 }
 
-pub fn lookup(date: String, ip: String, rbl: String, producer: &mut Producer) {
+pub async fn lookup(date: String, ip: String, rbl: String, producer: &mut FutureProducer) {
     let resolved = lookup_host(&*format!("{}.{}", ip, rbl)).unwrap_or_default();
     match resolved.is_empty() {
         true => info!("{} on {} : clean", ip, rbl),
-        false => producer
-            .send(&Record::from_value(
-                "result",
-                serde_json::to_string(&Result { date, ip, rbl }).unwrap(),
-            ))
-            .unwrap(),
+        false => {
+            let ip_orig = reverse_ip(ip).await;
+            let message = serde_json::to_string(&Result {
+                date,
+                ip: ip_orig,
+                rbl,
+            })
+            .unwrap();
+            let record: FutureRecord<String, String> = FutureRecord::to("result").payload(&message);
+            producer.send(record, Timeout::Never).await;
+        }
     }
 }
