@@ -5,7 +5,27 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "cargo" # See documentation for possible values
+    directory: "/rust/checker" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "cargo" # See documentation for possible values
+    directory: "/rust/rest_api" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/python/checker" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/python/inserter" # Location of package manifests
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "pip" # See documentation for possible values
+    directory: "/python/rest_api" # Location of package manifests
     schedule:
       interval: "daily"
