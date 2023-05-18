@@ -12,7 +12,7 @@ dns-lookup = "2.0.2"
 env_logger = "0.10.0"
 futures = "0.3.27"
 log = { version = "0.4.17", features = ["release_max_level_info"] }
-rdkafka = { version = "0.30.0", features = ["cmake-build"] }
+rdkafka = { version = "0.31.0", features = ["cmake-build"] }
 serde = "1"
 serde_json = "1"
 tokio = { version = "1.19.1", features = ["macros", "rt-multi-thread"] }
