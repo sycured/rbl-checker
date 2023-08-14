@@ -12,7 +12,7 @@ config = "0.13.3"
 env_logger = "0.10.0"
 futures = "0.3.28"
 ipaddress = "0.1.2"
-log = "0.4.19"
+log = "0.4.20"
 paperclip = { version = "0.8.0", features = ["actix4"] }
 rdkafka = { version = "0.33.2", features = ["cmake-build"] }
 serde = "1"
