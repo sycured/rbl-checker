@@ -10,7 +10,7 @@ edition = "2018"
 chrono = "0.4.31"
 dns-lookup = "2.0.4"
 env_logger = "0.10.0"
-futures = "0.3.28"
+futures = "0.3.29"
 log = { version = "0.4.20", features = ["release_max_level_info"] }
 rdkafka = { version = "0.34.0", features = ["cmake-build"] }
 serde = "1"
