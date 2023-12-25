@@ -10,7 +10,7 @@ edition = "2018"
 actix-web = "4.4.1"
 config = "0.13.4"
 env_logger = "0.10.1"
-futures = "0.3.29"
+futures = "0.3.30"
 ipaddress = "0.1.2"
 log = "0.4.20"
 paperclip = { version = "0.8.2", features = ["actix4"] }
